@@ -1,0 +1,6 @@
+<launch>
+    <node name="template_ws" pkg="template_ws" type="template_ws" output="screen" />
+    <param name="channel_number" type="int" value="128" />
+    <node pkg="rviz" type="rviz" name="rvizstart"  args="-d $(find template_ws)/rviz/config.rviz"/>
+    <node name="rqt_conf_gui" pkg="rqt_reconfigure" type="rqt_reconfigure" output="screen"/>
+</launch>
