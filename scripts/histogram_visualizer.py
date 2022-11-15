@@ -26,6 +26,10 @@ class DataHandler():
         self.pa2 = self.win.addPlot(title='Ambient values(smoothed)')
         self.pi2 = self.win.addPlot(title='Intensity values(smoothed)')
         self.pre2 = self.win.addPlot(title='Reflectivity values(smoothed)')
+        self.win.nextRow()
+        self.pa3 = self.win.addPlot(title='Ambient values(Histogram)')
+        self.pi3 = self.win.addPlot(title='Intensity values(Histogram)')
+        self.pre3 = self.win.addPlot(title='Reflectivity values(Histogram)')
 
         # first row
         self.curve_a = None
@@ -35,6 +39,10 @@ class DataHandler():
         self.curve_a2 = None
         self.curve_i2 = None
         self.curve_re2 = None
+        #third row
+        self.curve_a3 = None
+        self.curve_i3 = None
+        self.curve_re3 = None
 
         self.amb_data = None
         self.int_data = None
@@ -61,7 +69,12 @@ class DataHandler():
         setAValue2 = True
         setIValue2 = True
         setREValue2 = True
+        setAValue3 = True
+        setIValue3 = True
+        setREValue3 = True
         while not rospy.is_shutdown():
+            resolution = np.linspace(0,1,100)
+            #FIRST ROW
             if(self.amb_data is not None):
                 try:
                     x = np.linspace(1,len(self.amb_data),len(self.amb_data))
@@ -101,6 +114,7 @@ class DataHandler():
                     self.app.processEvents()
                 except:
                     continue
+            #SECOND ROW
             if(self.amb_data is not None):
                 try:
                     x = np.linspace(1,len(self.amb_data),len(self.amb_data))
@@ -140,6 +154,31 @@ class DataHandler():
                     self.app.processEvents()
                 except:
                     continue
+            #THIRD ROW
+            if(self.amb_data is not None):
+                y,x = np.histogram(self.amb_data,bins=resolution)
+                if setAValue3:
+                    self.curve_a3 = self.pa3.plot(x,y,pen=(255,0,0),stepMode=True, fillLevel=0, brush=(255, 0, 0, 80))
+                    setAValue3 = False         
+                self.curve_a3.setData(x,y)                 
+                self.curve_a3.setPos(0,0)                
+                self.app.processEvents()
+            if(self.int_data is not None):
+                y,x = np.histogram(self.int_data,bins=resolution)   
+                if setIValue3:
+                    self.curve_i3 = self.pi3.plot(x,y,pen=(0,255,0),stepMode=True, fillLevel=0, brush=(0, 255, 0, 80))
+                    setIValue3 = False                  
+                self.curve_i3.setData(x,y)                 
+                self.curve_i3.setPos(0,0)              
+                self.app.processEvents()
+            if(self.refl_data is not None):
+                y,x = np.histogram(self.refl_data,bins=resolution)   
+                if setREValue3:
+                    self.curve_re3 = self.pre3.plot(x,y,pen=(255,255,0),stepMode=True, fillLevel=0, brush=(255, 255, 0, 80))
+                    setREValue3 = False                  
+                self.curve_re3.setData(x,y)                 
+                self.curve_re3.setPos(0,0)                 
+                self.app.processEvents()
             rate.sleep()
         self.win.closeEvent()
         
